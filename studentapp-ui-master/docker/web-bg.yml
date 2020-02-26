@@ -1,0 +1,47 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy-vRELEASE_VERSION
+  namespace: web
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+      version: vRELEASE_VERSION
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: vRELEASE_VERSION
+    spec:
+      containers:
+      - name: nginx
+        image: rkalluru/d42-nginx:v1
+        env:
+          - name: TOMCAT_IP
+            value: app-svc-vRELEASE_VERSION.app.svc.cluster.local
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+--- 
+kind: Service
+apiVersion: v1
+metadata:
+  name:  web-svc-vRELEASE_VERSION
+  namespace: web
+spec:
+  selector:
+    app: nginx
+    version: vRELEASE_VERSION
+  type:  LoadBalancer
+  ports:
+  - name:  web-port
+    port:  80
+    targetPort:  80
+
+

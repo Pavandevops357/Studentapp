@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat-deploy
+  namespace: app
+spec:
+  selector:
+    matchLabels:
+      app: tomcat
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - name: tomcat
+        image: rkalluru/d42-app:vRELEASE_VERSION
+        envFrom:
+        - secretRef:
+            name: app-db-cred
+        env:
+          - name: DBHOST
+            value: mariadb-svc.db.svc.cluster.local
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
